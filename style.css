@@ -1041,7 +1041,6 @@
             }
         }
 
-
         @keyframes matchStartReveal {
             0% {
                 opacity: 0;
@@ -1110,35 +1109,264 @@
                 opacity: 0;
             }
         }
+
         .click-prompt {
-    position: absolute;
-    top: 8px; /* İç bloğun üst sınırına yakın, ancak fazla üstte değil */
-    right: 8px; /* İç bloğun sağ sınırına yakın */
-    font-family: 'Press Start 2P', cursive;
-    font-size: clamp(10px, 1.5vw, 12px);
-    background: linear-gradient(to right, #ffd700, #ff6b35, #4CAF50, #2196F3, #9C27B0, #FF5722);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    text-transform: uppercase;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5), 0 0 8px rgba(255, 215, 0, 0.3); /* Katmanlı, hafif yükseltilmiş efekt */
-    pointer-events: none;
-    z-index: 10; /* Üst katman gibi görünmesi için */
-}
+            position: absolute;
+            top: 8px;
+            /* İç bloğun üst sınırına yakın, ancak fazla üstte değil */
+            right: 8px;
+            /* İç bloğun sağ sınırına yakın */
+            font-family: 'Press Start 2P', cursive;
+            font-size: clamp(10px, 1.5vw, 12px);
+            background: linear-gradient(to right, #ffd700, #ff6b35, #4CAF50, #2196F3, #9C27B0, #FF5722);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-transform: uppercase;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5), 0 0 8px rgba(255, 215, 0, 0.3);
+            /* Katmanlı, hafif yükseltilmiş efekt */
+            pointer-events: none;
+            z-index: 10;
+            /* Üst katman gibi görünmesi için */
+        }
 
-/* Mobil Uyumluluk */
-@media (max-width: 768px) {
-    .click-prompt {
-        font-size: clamp(8px, 1.2vw, 10px);
-        top: 6px;
-        right: 6px;
-    }
-}
+        /* Mobil Uyumluluk */
+        @media (max-width: 768px) {
+            .click-prompt {
+                font-size: clamp(8px, 1.2vw, 10px);
+                top: 6px;
+                right: 6px;
+            }
+        }
 
-@media (max-width: 480px) {
-    .click-prompt {
-        font-size: clamp(7px, 1vw, 9px);
-        top: 5px;
-        right: 5px;
-    }
-}
+        @media (max-width: 480px) {
+            .click-prompt {
+                font-size: clamp(7px, 1vw, 9px);
+                top: 5px;
+                right: 5px;
+            }
+        }
+
+        /* Yeni Eklenen: Takım Güçleri Menüsü Stilleri */
+        .team-power-toggle {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #4CAF50 0%, #2196F3 100%);
+            border: none;
+            border-radius: 50%;
+            color: #ffffff;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            z-index: 9999;
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .team-power-toggle:hover {
+            transform: rotate(90deg) scale(1.1);
+            /* Dönme ve büyüme efekti */
+            box-shadow: 0 8px 20px rgba(76, 175, 80, 0.4);
+        }
+
+
+        .team-power-menu {
+            position: fixed;
+            top: 140px;
+            /* Toggle butonunun altına yerleştirir */
+            right: 20px;
+            background: linear-gradient(135deg, rgba(26, 35, 50, 0.95) 0%, rgba(13, 20, 33, 0.95) 100%);
+            border-radius: 15px;
+            padding: 15px;
+            border: 2px solid rgba(76, 175, 80, 0.2);
+            backdrop-filter: blur(15px);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            z-index: 9998;
+            display: none;
+            min-width: 280px;
+            max-height: 400px;
+            /* Menünün maksimum yüksekliği */
+            overflow-y: auto;
+            /* İçerik fazla olursa kaydırma çubuğu çıkar */
+        }
+
+        .team-power-menu.active {
+            display: block;
+            animation: fadeInUp 0.3s ease forwards;
+        }
+
+        .team-power-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .team-power-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .team-power-item:hover {
+            background: rgba(76, 175, 80, 0.2);
+            transform: translateX(5px);
+        }
+
+        .team-power-logo {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            object-fit: contain;
+        }
+
+        .team-power-name {
+            flex: 1;
+            font-size: 14px;
+            color: #ffffff;
+            font-weight: 500;
+        }
+
+        .team-power-rating {
+            font-size: 14px;
+            font-weight: 700;
+            color: #FFD700;
+            background: rgba(255, 215, 0, 0.2);
+            padding: 2px 8px;
+            border-radius: 4px;
+            min-width: 50px;
+            text-align: center;
+        }
+
+        /* Mobil cihazlar için uyarlama */
+        @media (max-width: 768px) {
+            .team-power-toggle {
+                width: 45px;
+                height: 45px;
+                font-size: 18px;
+                top: 75px;
+                right: 15px;
+            }
+
+            .team-power-menu {
+                top: 130px;
+                right: 15px;
+                min-width: 240px;
+                max-height: 350px;
+            }
+
+            .team-power-item {
+                padding: 8px;
+            }
+
+            .team-power-logo {
+                width: 20px;
+                height: 20px;
+            }
+
+            .team-power-name,
+            .team-power-rating {
+                font-size: 12px;
+            }
+        }
+
+        .team-power-name-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .team-power-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .team-power-bar-fill {
+            height: 100%;
+            transition: width 0.5s ease;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+            /* Parlama efekti */
+        }
+
+        /* Güç çubuğu renkleri */
+        .team-power-bar-fill.power-excellent {
+            background: linear-gradient(135deg, #2ECC71, #27AE60);
+            /* Daha parlak yeşil */
+            background-size: 200% 200%;
+            animation: gradientFlow 3s ease infinite;
+            box-shadow: 0 0 15px rgba(46, 204, 113, 0.7);
+            /* Parlama efekti */
+        }
+
+        .team-power-bar-fill.power-strong {
+            background: linear-gradient(135deg, #3498DB, #2980B9);
+            /* Daha parlak mavi */
+            background-size: 200% 200%;
+            animation: gradientFlow 3s ease infinite;
+            box-shadow: 0 0 15px rgba(52, 152, 219, 0.7);
+            /* Parlama efekti */
+        }
+
+        .team-power-bar-fill.power-medium {
+            background: linear-gradient(135deg, #F1C40F, #F39C12);
+            /* Daha parlak sarı */
+            background-size: 200% 200%;
+            animation: gradientFlow 3s ease infinite;
+            box-shadow: 0 0 15px rgba(241, 196, 15, 0.7);
+            /* Parlama efekti */
+        }
+
+        .team-power-bar-fill.power-weak {
+            background: linear-gradient(135deg, #E67E22, #D35400);
+            /* Daha parlak turuncu */
+            background-size: 200% 200%;
+            animation: gradientFlow 3s ease infinite;
+            box-shadow: 0 0 15px rgba(230, 126, 34, 0.7);
+            /* Parlama efekti */
+        }
+
+        .team-power-bar-fill.power-very-weak {
+            background: linear-gradient(135deg, #E74C3C, #C0392B);
+            /* Daha parlak kırmızı */
+            background-size: 200% 200%;
+            animation: gradientFlow 3s ease infinite;
+            box-shadow: 0 0 15px rgba(231, 76, 60, 0.7);
+            /* Parlama efekti */
+        }
+
+
+        /* Gradient akış animasyonu */
+        @keyframes gradientFlow {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        /* Mobil uyumluluk için küçük ekranlarda stil ayarlaması */
+        @media (max-width: 768px) {
+            .team-power-bar {
+                height: 6px;
+            }
+        }
