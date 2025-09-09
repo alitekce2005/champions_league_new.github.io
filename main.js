@@ -1,4 +1,4 @@
-// Kullanıcı ve Bakiye Bilgileri
+ // Kullanıcı ve Bakiye Bilgileri
         let user = {
             name: "Misafir",
             money: 1000,
@@ -7,6 +7,7 @@
             reachedStage: "",
             groupPosition: 0
         };
+
         // Takım Listesi
         const takimlar = [
             "MANCHESTER UNITED", "MANCHESTER CITY", "CHELSEA", "ARSENAL",
@@ -18,6 +19,7 @@
             "ATHLETIC BILBAO", "FEYENOORD", "FK KIZILYILDIZ", "SEVILLA FC",
             "BAYER 04 LEVERKUSEN", "VILLARREAL CF", "CSKA MOSKOVA", "FENERBAHCE"
         ];
+
         // Takım Gol Dağılımları
         const takimGolDagilimlari = {
             "JUVENTUS": [0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 3, 3, 3, 3, 3, 3, 4, 4, 4, 5],
@@ -53,6 +55,7 @@
             "CSKA MOSKOVA": [0, 0, 0, 1, 1, 1, 2, 2, 2, 2, 2, 1, 3, 3, 3, 3, 4, 4, 4, 4],
             "FENERBAHCE": [0, 0, 0, 1, 1, 1, 2, 2, 2, 2, 2, 1, 3, 3, 3, 3, 3, 3, 4, 4]
         };
+
         // Logo Haritası
         const logoMap = {
             "CHELSEA": "chepng.png",
@@ -88,8 +91,46 @@
             "CSKA MOSKOVA": "cskaarma.png",
             "FENERBAHCE": "fbarma.png"
         };
+
+        // Yeni Eklenen: Takım Güç Oranları (0-100 arası)
+        const teamPowerRatings = {
+            "REAL MADRID": 95,
+            "MANCHESTER CITY": 94,
+            "BAYERN MUNICH": 93,
+            "PARIS SAINT GERMAIN": 92,
+            "LIVERPOOL": 91,
+            "BARCELONA": 90,
+            "MANCHESTER UNITED": 89,
+            "CHELSEA": 88,
+            "JUVENTUS": 87,
+            "ARSENAL": 86,
+            "BORUSSIA DORTMUND": 85,
+            "ATLETICO MADRID": 84,
+            "FC INTERNAZIONALE MILANO": 83,
+            "TOTTENHAM HOTSPUR FC": 82,
+            "AC MILAN": 81,
+            "AJAX AMSTERDAM": 80,
+            "FC PORTO": 79,
+            "SL BENFICA": 78,
+            "SEVILLA FC": 77,
+            "BAYER 04 LEVERKUSEN": 76,
+            "SSC NAPOLI": 75,
+            "PSV EINDHOVEN": 74,
+            "OLYMPIQUE LYON": 73,
+            "OLYMPIQUE MARSILYA": 72,
+            "VILLARREAL CF": 71,
+            "ATHLETIC BILBAO": 70,
+            "FEYENOORD": 69,
+            "GALATASARAY": 68,
+            "BESIKTAS": 67,
+            "FK KIZILYILDIZ": 66,
+            "FENERBAHCE": 65,
+            "CSKA MOSKOVA": 64
+        };
+
         let gruplar = [];
         let currentBlockIndex = 0;
+
         // Sayfa Yüklendiğinde Çalışacaklar
         window.addEventListener('DOMContentLoaded', function () {
             loadUserData();
@@ -98,7 +139,98 @@
             initializeGame();
             setupScrollButton();
             setupQuickNav(); // Yeni: Hızlı Menüyü Ayarla
+            setupTeamPowerMenu(); // **DÜZELTİLDİ**: Takım Güçleri Menüsünü Ayarla (DOMContentLoaded içinde)
         });
+
+        // Yeni Eklenen: Takım Güçleri Menüsü İşlevleri
+        function setupTeamPowerMenu() {
+            const toggleBtn = document.getElementById('teamPowerToggle');
+            const menu = document.getElementById('teamPowerMenu');
+            const list = document.getElementById('teamPowerList');
+
+            // Başlık ekle
+    const menuTitle = document.createElement('div');
+    menuTitle.className = 'team-power-menu-title';
+    menuTitle.innerHTML = `
+        <h3 style="
+            color: #ffd700; 
+            text-align: center; 
+            padding: 10px; 
+            border-bottom: 2px solid rgba(255, 215, 0, 0.2);
+            font-size: 16px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        ">🏆 TAKIM GÜÇ SEVİYELERİ 🏆</h3>
+    `;
+    list.parentNode.insertBefore(menuTitle, list);
+
+            // Her bir takım için güç puanı oluştur ve listeye ekle
+            takimlar.forEach(takimAdi => {
+                const item = document.createElement('div');
+                item.className = 'team-power-item';
+
+                const logo = document.createElement('img');
+                logo.src = `image/${logoMap[takimAdi] || 'default.png'}`;
+                logo.alt = takimAdi;
+                logo.className = 'team-power-logo';
+                logo.onerror = function () { this.src = 'image/default.png'; };
+
+                const nameContainer = document.createElement('div');
+                nameContainer.className = 'team-power-name-container';
+
+                const name = document.createElement('div');
+                name.className = 'team-power-name';
+                name.textContent = takimAdi;
+
+                // Güç çubuğu ekle
+                const powerBar = document.createElement('div');
+                powerBar.className = 'team-power-bar';
+
+                const powerBarFill = document.createElement('div');
+                powerBarFill.className = 'team-power-bar-fill';
+
+                // Güç puanını al
+                const gucPuani = teamPowerRatings[takimAdi] || 0;
+
+                // Güç çubuğunun genişliğini ayarla
+                powerBarFill.style.width = `${gucPuani}%`;
+                powerBarFill.style.backgroundColor = getColorForPowerBar(gucPuani);
+
+                powerBar.appendChild(powerBarFill);
+
+                const rating = document.createElement('div');
+                rating.className = 'team-power-rating';
+                rating.textContent = `${gucPuani}`;
+
+                nameContainer.appendChild(name);
+                nameContainer.appendChild(powerBar);
+
+                item.appendChild(logo);
+                item.appendChild(nameContainer);
+                item.appendChild(rating);
+                list.appendChild(item);
+
+                powerBarFill.classList.add('team-power-bar-fill');
+                powerBarFill.classList.add(getColorForPowerBar(gucPuani));
+
+            });
+
+            // Menüyü aç/kapa
+            toggleBtn.addEventListener('click', function () {
+                menu.classList.toggle('active');
+            });
+        }
+
+        // Güç çubuğu için renk belirleme fonksiyonu
+        function getColorForPowerBar(power) {
+            if (power >= 90) return 'power-excellent';  // Yeşil (çok güçlü)
+            if (power >= 80) return 'power-strong';     // Mavi (güçlü)
+            if (power >= 70) return 'power-medium';     // Sarı (orta)
+            if (power >= 60) return 'power-weak';       // Turuncu (zayıf)
+            return 'power-very-weak';                   // Kırmızı (çok zayıf)
+        }
+
+
 
         // Yeni Eklenen: Hızlı Navigasyon Menüsü İşlevleri
         function setupQuickNav() {
@@ -116,7 +248,6 @@
                 button.addEventListener('click', function () {
                     const targetId = this.getAttribute('data-target');
                     menu.classList.remove('active'); // Tıklanınca menüyü kapat
-
                     if (targetId === 'user-group') {
                         // "Gruplar" butonu için özel davranış
                         scrollToUserGroup();
@@ -137,7 +268,6 @@
                 alert("Lütfen önce bir takım seçin!");
                 return;
             }
-
             // Kullanıcının takımını içeren ilk grup bloğunu bul
             for (let g = 0; g < gruplar.length; g++) {
                 const userIndex = gruplar[g].findIndex(t => t.isim === user.selectedTeam);
@@ -177,6 +307,7 @@
                 document.getElementById("money-display").textContent = user.money + " ₺";
             }
         }
+
         // Günlük Ödül Kontrolü
         function checkDailyReward() {
             const lastLogin = localStorage.getItem('lastLogin');
@@ -191,6 +322,7 @@
                 updateLeaderboard();
             }
         }
+
         // Liderlik Tablosu Güncelleme
         function updateLeaderboard() {
             let leaderboard = JSON.parse(localStorage.getItem('leaderboard') || '[]');
@@ -215,19 +347,21 @@
                     row.className = 'highlighted-team';
                 }
                 row.innerHTML = `
-            <td>${index + 1}</td>
-            <td>${entry.username}</td>
-            <td>${entry.balance} ₺</td>
-          `;
+                    <td>${index + 1}</td>
+                    <td>${entry.username}</td>
+                    <td>${entry.balance} ₺</td>
+                `;
                 tbody.appendChild(row);
             });
         }
+
         // Kullanıcı Verilerini Yerel Depoya Kaydet
         function saveUserData() {
             localStorage.setItem('userName', user.name);
             localStorage.setItem('userMoney', user.money);
             updateLeaderboard();
         }
+
         // Oyun Başlatma
         function initializeGame() {
             const select = $('#takimSecimi');
@@ -245,6 +379,7 @@
             // İlk seçeneği varsayılan olarak seçili yap
             select.val(null).trigger('change');
         }
+
         // Takım formatlama fonksiyonu (logo ve isim)
         function formatTeam(team) {
             if (!team.id) {
@@ -252,12 +387,13 @@
             }
             const logoUrl = `image/${logoMap[team.text] || 'default.png'}`;
             return $(`
-          <span style="display: flex; align-items: center; gap: 8px;">
-            <img src="${logoUrl}" class="select2-team-logo" alt="${team.text}" onerror="this.onerror=null; this.src='image/default.png';">
-            <span> ${team.text}</span>
-          </span>
-        `);
+                <span style="display: flex; align-items: center; gap: 8px;">
+                    <img src="${logoUrl}" class="select2-team-logo" alt="${team.text}" onerror="this.onerror=null; this.src='image/default.png';">
+                    <span> ${team.text}</span>
+                </span>
+            `);
         }
+
         // Scroll Button Setup
         function setupScrollButton() {
             const scrollBtn = document.getElementById("scrollTop");
@@ -275,11 +411,13 @@
                 });
             });
         }
+
         // Bahis Formu Aç/Kapa
         function toggleBettingForm() {
             const form = document.getElementById("bettingForm");
             form.classList.toggle("active");
         }
+
         // Utility Functions
         function shuffle(arr) {
             for (let i = arr.length - 1; i > 0; i--) {
@@ -287,10 +425,12 @@
                 [arr[i], arr[j]] = [arr[j], arr[i]];
             }
         }
+
         function rastgeleGolUret(takimAdi) {
             const dagilim = takimGolDagilimlari[takimAdi] || [0, 1, 1, 2, 2, 3, 3, 4, 4, 5];
             return dagilim[Math.floor(Math.random() * dagilim.length)];
         }
+
         function oynaMac(t1, t2) {
             let g1 = rastgeleGolUret(t1);
             let g2 = rastgeleGolUret(t2);
@@ -301,6 +441,7 @@
                 goller: [g1, g2]
             };
         }
+
         // Blok Oluşturma Fonksiyonu
         function createResultBlock(title, subtitle, content, customId = null) {
             return new Promise((resolve) => {
@@ -330,24 +471,25 @@
                 }, 600);
             });
         }
+
         // Grup Tablosu Oluşturma
         function createGroupTable(grup, grupAdi) {
             const table = document.createElement("table");
             table.className = "group-table";
             const thead = document.createElement("thead");
             thead.innerHTML = `
-          <tr>
-            <th>Takım</th>
-            <th>O</th>
-            <th>G</th>
-            <th>B</th>
-            <th>M</th>
-            <th>AG</th>
-            <th>YG</th>
-            <th>Puan</th>
-            <th>Averaj</th>
-          </tr>
-        `;
+                <tr>
+                    <th>Takım</th>
+                    <th>O</th>
+                    <th>G</th>
+                    <th>B</th>
+                    <th>M</th>
+                    <th>AG</th>
+                    <th>YG</th>
+                    <th>Puan</th>
+                    <th>Averaj</th>
+                </tr>
+            `;
             table.appendChild(thead);
             const tbody = document.createElement("tbody");
             grup.forEach(takim => {
@@ -356,24 +498,25 @@
                     row.className = "highlighted-team";
                 }
                 row.innerHTML = `
-            <td class="team-cell">
-              <img src="image/${logoMap[takim.isim] || 'default.png'}" alt="${takim.isim}" class="team-logo" onerror="this.onerror=null; this.src='image/default.png';">
-              <span>${takim.isim}</span>
-            </td>
-            <td>${takim.oynanan}</td>
-            <td>${takim.galibiyet}</td>
-            <td>${takim.beraberlik}</td>
-            <td>${takim.maglubiyet}</td>
-            <td>${takim.atilanGol}</td>
-            <td>${takim.yenilenGol}</td>
-            <td>${takim.puan}</td>
-            <td>${takim.averaj}</td>
-          `;
+                    <td class="team-cell">
+                        <img src="image/${logoMap[takim.isim] || 'default.png'}" alt="${takim.isim}" class="team-logo" onerror="this.onerror=null; this.src='image/default.png';">
+                        <span>${takim.isim}</span>
+                    </td>
+                    <td>${takim.oynanan}</td>
+                    <td>${takim.galibiyet}</td>
+                    <td>${takim.beraberlik}</td>
+                    <td>${takim.maglubiyet}</td>
+                    <td>${takim.atilanGol}</td>
+                    <td>${takim.yenilenGol}</td>
+                    <td>${takim.puan}</td>
+                    <td>${takim.averaj}</td>
+                `;
                 tbody.appendChild(row);
             });
             table.appendChild(tbody);
             return table;
         }
+
         // Maç Listesi Oluşturma
         function createMatchesList(matches, isGroup = false) {
             const container = document.createElement("div");
@@ -420,10 +563,10 @@
                     const g2 = parts[3];
                     const t2 = parts[4].trim();
                     matchEl.innerHTML = `
-              <img src="image/${logoMap[t1] || 'default.png'}" alt="${t1}" class="match-team-logo" onerror="this.onerror=null; this.src='image/default.png';">
-              <span>${t1} ${g1} - ${g2} ${t2}</span>
-              <img src="image/${logoMap[t2] || 'default.png'}" alt="${t2}" class="match-team-logo" onerror="this.onerror=null; this.src='image/default.png';">
-            `;
+                        <img src="image/${logoMap[t1] || 'default.png'}" alt="${t1}" class="match-team-logo" onerror="this.onerror=null; this.src='image/default.png';">
+                        <span>${t1} ${g1} - ${g2} ${t2}</span>
+                        <img src="image/${logoMap[t2] || 'default.png'}" alt="${t2}" class="match-team-logo" onerror="this.onerror=null; this.src='image/default.png';">
+                    `;
                 } else {
                     matchEl.textContent = match;
                 }
@@ -432,6 +575,7 @@
             });
             return container;
         }
+
         // Grup İçeriği Oluşturma (Maçlar + Tablo)
         function createGroupContent(matches, grup) {
             const content = document.createElement("div");
@@ -439,6 +583,7 @@
             content.appendChild(createGroupTable(grup));
             return content;
         }
+
         // Kullanıcı Bilgilerini Güncelleme
         function updateUserInfo() {
             const nameInput = document.getElementById("username-input").value.trim();
@@ -467,6 +612,7 @@
             saveUserData();
             return true;
         }
+
         // Para Animasyonu (Özelleştirilmiş Mesaj Desteği)
         // Maç Başladı Bildirimi ve Parçacıklar (1 saniye sürümü)
         function showMatchStartNotification() {
@@ -475,10 +621,8 @@
             notification.className = 'match-start-notification';
             notification.innerHTML = '<div class="match-start-text">⚽ MAÇ BAŞLADI! ⚽</div>';
             document.body.appendChild(notification);
-
             // Parçacıkları oluştur ve animasyonu başlat
             createMatchParticles();
-
             // Bildirimi 1 saniye sonra DOM'dan kaldır (CSS animasyonu da 1s olmalı)
             setTimeout(() => {
                 if (notification.parentNode) {
@@ -486,6 +630,7 @@
                 }
             }, 1000); // <-- SADECE 1 SANİYE GÖSTER
         }
+
         // Konfeti Efekti
         function createConfetti() {
             const colors = ['#ffd700', '#ff6b35', '#4CAF50', '#2196F3', '#9C27B0', '#FF5722'];
@@ -504,6 +649,7 @@
                 }, i * 30);
             }
         }
+
         // Maç Başladı Bildirimi ve Parçacıklar
         function showMatchStartNotification() {
             // Ana bildirim div'ini oluştur
@@ -511,10 +657,8 @@
             notification.className = 'match-start-notification';
             notification.innerHTML = '<div class="match-start-text">⚽ MAÇ BAŞLADI! ⚽</div>';
             document.body.appendChild(notification);
-
             // Parçacıkları oluştur ve animasyonu başlat
             createMatchParticles();
-
             // Bildirimi belirli süre sonra DOM'dan kaldır
             setTimeout(() => {
                 if (notification.parentNode) {
@@ -528,38 +672,30 @@
             const colors = ['#ffd700', '#ff6b35', '#4CAF50', '#2196F3', '#FF5722', '#ffffff'];
             const notification = document.querySelector('.match-start-notification');
             if (!notification) return;
-
             const rect = notification.getBoundingClientRect();
             const centerX = rect.left + rect.width / 2;
             const centerY = rect.top + rect.height / 2;
-
             for (let i = 0; i < 150; i++) {
                 setTimeout(() => {
                     const particle = document.createElement('div');
                     particle.className = 'match-particle';
                     particle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-
                     // Rastgele yön ve dönüş
                     const angle = Math.random() * 360;
                     const distance = Math.random() * 300 + 100;
                     const tx = Math.cos(angle * Math.PI / 180) * distance;
                     const ty = Math.sin(angle * Math.PI / 180) * distance;
                     const r = Math.random() * 360;
-
                     particle.style.setProperty('--tx', `${tx}px`);
                     particle.style.setProperty('--ty', `${ty}px`);
                     particle.style.setProperty('--r', `${r}deg`);
-
                     // Parçacığı ekranın ortasına yerleştir
                     particle.style.left = `${centerX}px`;
                     particle.style.top = `${centerY}px`;
-
                     // Animasyon süresi ve gecikmesi
                     particle.style.animation = `particleBurst ${Math.random() * 1 + 1}s ease-out forwards`;
                     particle.style.animationDelay = `${Math.random() * 0.5}s`;
-
                     document.body.appendChild(particle);
-
                     // Parçacığı temizle
                     setTimeout(() => {
                         particle.remove();
@@ -567,6 +703,7 @@
                 }, i * 20);
             }
         }
+
         // Bakiye Güncelleme
         function updateMoney(amount) {
             user.money += amount;
@@ -574,6 +711,7 @@
             document.getElementById("money-display").textContent = user.money + " ₺";
             saveUserData();
         }
+
         // Kazanç Hesaplama
         function calculateWinnings(reachedStage, grupSirasi) {
             const stageMultipliers = {
@@ -612,6 +750,7 @@
             }
             return { message, amount, isWin };
         }
+
         // Ana Turnuva Fonksiyonu
         async function baslatTurnuva() {
             showMatchStartNotification(); // "MAÇ BAŞLADI!" bildirimini göster
@@ -733,39 +872,39 @@
             finalResultsContainer.className = "final-results";
             finalResultsContainer.id = "finalResults"; // ID: Sonuçlar bölümü için
             finalResultsContainer.innerHTML = `
-          <div class="champion-announcement">
-            🏆 ŞAMPİYON: ${champion} 🏆
-          </div>
-          <div class="user-performance">
-            <h3 style="color: #ffd700; margin-bottom: 15px;">📊 PERFORMANSINIZ</h3>
-            <div class="performance-grid">
-              <div class="performance-item">
-                <div class="performance-label">Seçilen Takım</div>
-                <div class="performance-value">${user.selectedTeam}</div>
-              </div>
-              <div class="performance-item">
-                <div class="performance-label">Grup Sıralaması</div>
-                <div class="performance-value">${userGroupPosition}. sıra</div>
-              </div>
-              <div class="performance-item">
-                <div class="performance-label">Ulaşılan Tur</div>
-                <div class="performance-value">${userReachedStage}</div>
-              </div>
-              <div class="performance-item">
-                <div class="performance-label">Kazanç/Kayıp</div>
-                <div class="performance-value" style="color: ${winnings.amount > 0 ? '#4CAF50' : '#f44336'}">${winnings.amount > 0 ? '+' : ''}${winnings.amount}₺</div>
-              </div>
-              <div class="performance-item">
-                <div class="performance-label">Güncel Bakiye</div>
-                <div class="performance-value">${finalMoney}₺</div>
-              </div>
-              <div class="performance-item">
-                <div class="performance-label">Sonuç</div>
-                <div class="performance-value">${winnings.message}</div>
-              </div>
-            </div>
-          </div>
-        `;
+                <div class="champion-announcement">
+                    🏆 ŞAMPİYON: ${champion} 🏆
+                </div>
+                <div class="user-performance">
+                    <h3 style="color: #ffd700; margin-bottom: 15px;">📊 PERFORMANSINIZ</h3>
+                    <div class="performance-grid">
+                        <div class="performance-item">
+                            <div class="performance-label">Seçilen Takım</div>
+                            <div class="performance-value">${user.selectedTeam}</div>
+                        </div>
+                        <div class="performance-item">
+                            <div class="performance-label">Grup Sıralaması</div>
+                            <div class="performance-value">${userGroupPosition}. sıra</div>
+                        </div>
+                        <div class="performance-item">
+                            <div class="performance-label">Ulaşılan Tur</div>
+                            <div class="performance-value">${userReachedStage}</div>
+                        </div>
+                        <div class="performance-item">
+                            <div class="performance-label">Kazanç/Kayıp</div>
+                            <div class="performance-value" style="color: ${winnings.amount > 0 ? '#4CAF50' : '#f44336'}">${winnings.amount > 0 ? '+' : ''}${winnings.amount}₺</div>
+                        </div>
+                        <div class="performance-item">
+                            <div class="performance-label">Güncel Bakiye</div>
+                            <div class="performance-value">${finalMoney}₺</div>
+                        </div>
+                        <div class="performance-item">
+                            <div class="performance-label">Sonuç</div>
+                            <div class="performance-value">${winnings.message}</div>
+                        </div>
+                    </div>
+                </div>
+            `;
             await createResultBlock(
                 "🎊 TURNUVA SONUÇLARI",
                 `Şampiyon belli oldu! Performansınızı inceleyin`,
